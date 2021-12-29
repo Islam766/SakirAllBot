@@ -17,40 +17,17 @@ client = TelegramClient('client', api_id, api_hash).start(bot_token=bot_token)
 
 anlik_calisan = []
 
-@client.on(events.NewMessage(pattern='^(?i)/cancel'))
+@client.on(events.NewMessage(pattern='^(?i)/finish'))
 async def cancel(event):
   global anlik_calisan
   anlik_calisan.remove(event.chat_id)
-
-
-@client.on(events.NewMessage(pattern="^/start$"))
-async def start(event):
-  await event.reply("**GroupTaggerBot**, Grup veya kanaldaki neredeyse tüm üyelerden bahsedebilirim Bu tür botlar için Kod Sahibi ile iletişime geçin @SakirBey1 ★\nDaha fazla bilgi için **/help**'i tıklayın.",
-                    buttons=(
-                      [Button.url('➕ Beni Bir Gruba Ekle', 'https://t.me/Sakirvipall_bot?startgroup=a'),
-                      Button.url('📣 Support', 'https://t.me/kpdailesi'),
-                      Button.url('💻   Sahibim', 'https://t.me/SakirBey1')]
-                    ),
-                    link_preview=False
-                   )
-@client.on(events.NewMessage(pattern="^/help$"))
-async def help(event):
-  helptext = "**UserTagger bot'un Yardım Menüsü**\n\nKomut: /all \n  Bu komutu, başkalarına bahsetmek istediğiniz metinle birlikte kullanabilirsiniz. \n`Örnek: /all Günaydın!`  \nBu komutu yanıt olarak kullanabilirsiniz. herhangi bir mesaj Bot, yanıtlanan iletiye kullanıcıları etiketleyecek"
-  await event.reply(helptext,
-                    buttons=(
-                      [Button.url('➕ Beni Bir Gruba Ekle', 'https://t.me/Sakirvipall_bot?startgroup=a'),
-                       Button.url('📣 Support', 'https://t.me/kpdailesi'),
-                      Button.url('💻  Sahibim', 'https://t.me/SakirBey1')]
-                    ),
-                    link_preview=False
-                   )
 
 
 @client.on(events.NewMessage(pattern="^/all ?(.*)"))
 async def mentionall(event):
   global anlik_calisan
   if event.is_private:
-    return await event.respond("__Bu komut gruplarda ve kanallarda kullanılabilir.!__")
+    return await event.respond("__Эту команду можно использовать в группах и каналах!.!__")
   
   admins = []
   async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
@@ -65,11 +42,11 @@ async def mentionall(event):
     mode = "text_on_reply"
     msg = event.reply_to_msg_id
     if msg == None:
-        return await event.respond("__Eski mesajlar için üyelerden bahsedemem! (gruba eklemeden önce gönderilen mesajlar)__")
+        return await event.respond("__Я не могу упоминать участников старых постов! (сообщения отправлены перед добавлением в группу)__")
   elif event.pattern_match.group(1) and event.reply_to_msg_id:
-    return await event.respond("__Bana bir argüman ver!__")
+    return await event.respond("__дайте мне аргумент!__")
   else:
-    return await event.respond("__Bir mesajı yanıtlayın veya başkalarından bahsetmem için bana bir metin verin!__")
+    return await event.respond("__Ответьте на сообщение или отправьте мне текст, чтобы упомянуть других!__")
     
   if mode == "text_on_cmd":
     anlik_calisan.append(event.chat_id)
@@ -79,7 +56,7 @@ async def mentionall(event):
       usrnum += 1
       usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-        await event.respond("İşlem Başarılı Bir Şekilde Durduruldu ❌")
+        await event.respond("Процесс успешно остановлен ❌")
         return
       if usrnum == 5:
         await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
